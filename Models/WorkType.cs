@@ -9,5 +9,7 @@ namespace Lab5.Models
         int Id { get; set; }
 
         string Name { get; set; }
+
+        List<Work> Works { get; set; }
     }
 }

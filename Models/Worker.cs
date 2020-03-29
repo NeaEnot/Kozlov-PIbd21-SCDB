@@ -18,7 +18,11 @@ namespace Lab5.Models
 
         DateTime AdmissionDate { get; set; }
 
+        int PositionId { get; set; }
+
         Position Position { get; set; }
+
+        int BrigadeId { get; set; }
 
         Brigade Brigade { get; set; }
     }

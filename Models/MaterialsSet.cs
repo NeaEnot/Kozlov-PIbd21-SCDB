@@ -10,8 +10,12 @@ namespace Lab5.Models
 
         int Count { get; set; }
 
-        Order Order { get; set; }
+        int MaterialsTypeId { get; set; }
 
         MaterialsType MaterialsType { get; set; }
+
+        int OrderId { get; set; }
+
+        Order Order { get; set; }
     }
 }

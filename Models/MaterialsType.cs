@@ -11,5 +11,7 @@ namespace Lab5.Models
         string Name { get; set; }
 
         int PricePerUnit { get; set; }
+
+        List<MaterialsSet> MaterialsSets { get; set; }
     }
 }

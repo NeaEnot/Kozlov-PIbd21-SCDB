@@ -11,5 +11,11 @@ namespace Lab5.Models
         DateTime RegistrationDate { get; set; }
 
         DateTime DeliveryDate { get; set; }
+
+        List<MaterialsSet> MaterialsSets { get; set; }
+
+        List<Brigade> Brigades { get; set; }
+
+        List<Work> Works { get; set; }
     }
 }

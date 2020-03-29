@@ -8,8 +8,12 @@ namespace Lab5.Models
     {
         int Id { get; set; }
 
+        int WorkTypeId { get; set; }
+
         WorkType WorkType { get; set; }
 
+        int OrderId { get; set; }
+
         Order Order { get; set; }
-    }
+}
 }
