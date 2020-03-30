@@ -1,29 +1,48 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace Lab5.Models
 {
+    [Table("Worker")]
     public class Worker
     {
-        int Id { get; set; }
+        [Required]
+        [Column("id")]
+        public int Id { get; set; }
 
-        string FirstName { get; set; }
+        [Required]
+        [Column("first_name")]
+        public string FirstName { get; set; }
 
-        string SecondName { get; set; }
+        [Required]
+        [Column("second_name")]
+        public string SecondName { get; set; }
 
-        string LastName { get; set; }
+        [Required]
+        [Column("last_name")]
+        public string LastName { get; set; }
 
-        DateTime BirthDate { get; set; }
+        [Required]
+        [Column("birth_date")]
+        public DateTime BirthDate { get; set; }
 
-        DateTime AdmissionDate { get; set; }
+        [Required]
+        [Column("admission_date")]
+        public DateTime AdmissionDate { get; set; }
 
-        int PositionId { get; set; }
+        [Required]
+        [Column("position_id")]
+        public int PositionId { get; set; }
 
-        Position Position { get; set; }
+        public Position Position { get; set; }
 
-        int BrigadeId { get; set; }
+        [Required]
+        [Column("brigade_id")]
+        public int BrigadeId { get; set; }
 
-        Brigade Brigade { get; set; }
+        public Brigade Brigade { get; set; }
     }
 }

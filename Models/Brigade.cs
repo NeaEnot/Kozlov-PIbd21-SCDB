@@ -1,19 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace Lab5.Models
 {
+    [Table("Brigade")]
     public class Brigade
     {
-        int Id { get; set; }
+        [Required]
+        [Column("id")]
+        public int Id { get; set; }
 
-        int WorkTypeId { get; set; }
+        [Required]
+        [Column("work_type_id")]
+        public int WorkTypeId { get; set; }
 
-        WorkType WorkType { get; set; }
+        public WorkType WorkType { get; set; }
 
-        int OrderId { get; set; }
+        [Column("order_id")]
+        public int? OrderId { get; set; }
 
-        Order Order { get; set; }
+        public Order Order { get; set; }
+
+        public List<Worker> Workers { get; set; }
     }
 }

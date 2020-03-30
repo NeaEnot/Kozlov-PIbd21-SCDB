@@ -1,21 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace Lab5.Models
 {
+    [Table("Materials_set")]
     public class MaterialsSet
     {
-        int Id { get; set; }
+        [Required]
+        [Column("id")]
+        public int Id { get; set; }
 
-        int Count { get; set; }
+        [Required]
+        [Column("count")]
+        public int Count { get; set; }
 
-        int MaterialsTypeId { get; set; }
+        [Required]
+        [Column("materials_type_id")]
+        public int MaterialsTypeId { get; set; }
 
-        MaterialsType MaterialsType { get; set; }
+        public MaterialsType MaterialsType { get; set; }
 
-        int OrderId { get; set; }
+        [Required]
+        [Column("order_id")]
+        public int OrderId { get; set; }
 
-        Order Order { get; set; }
+        public Order Order { get; set; }
     }
 }

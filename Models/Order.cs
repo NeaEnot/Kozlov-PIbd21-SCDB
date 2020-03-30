@@ -1,21 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace Lab5.Models
 {
+    [Table("Order")]
     public class Order
     {
-        int Id { get; set; }
+        [Required]
+        [Column("id")]
+        public int Id { get; set; }
 
-        DateTime RegistrationDate { get; set; }
+        [Required]
+        [Column("registreation_date")]
+        public DateTime RegistrationDate { get; set; }
 
-        DateTime DeliveryDate { get; set; }
+        [Required]
+        [Column("delivery_date")]
+        public DateTime DeliveryDate { get; set; }
 
-        List<MaterialsSet> MaterialsSets { get; set; }
+        public List<MaterialsSet> MaterialsSets { get; set; }
 
-        List<Brigade> Brigades { get; set; }
+        public List<Brigade> Brigades { get; set; }
 
-        List<Work> Works { get; set; }
+        public List<Work> Works { get; set; }
     }
 }
