@@ -25,6 +25,7 @@ namespace Lab5
                         Read();
                         break;
                     case "update":
+                        Update();
                         break;
                     case "delete":
                         break;
@@ -51,7 +52,7 @@ namespace Lab5
                             Console.WriteLine("Work type: ");
                             string workTypeName = Console.ReadLine();
 
-                            Brigade brigade = new Brigade() { WorkTypeId = db.WorkTypes.FirstOrDefault(rec => rec.Name == workTypeName).Id };
+                            Brigade brigade = new Brigade() { WorkTypeId = db.WorkTypes.First(rec => rec.Name == workTypeName).Id };
 
                             db.Add(brigade);
                             db.SaveChanges();
@@ -70,17 +71,11 @@ namespace Lab5
                             Console.WriteLine("Order Id: ");
                             int orderId = Int32.Parse(Console.ReadLine());
 
-                            Order order = db.Orders.Where(rec => rec.Id == orderId).FirstOrDefault();
-                            if (order == null)
-                            {
-                                throw new Exception("Order with same Id isn't exist");
-                            }
-
                             MaterialsSet materialsSet =
                                 new MaterialsSet()
                                 {
                                     Count = materialsCount,
-                                    MaterialsTypeId = db.MaterialsTypes.FirstOrDefault(rec => rec.Name == materialsTypeName).Id,
+                                    MaterialsTypeId = db.MaterialsTypes.First(rec => rec.Name == materialsTypeName).Id,
                                     OrderId = orderId
                                 };
 
@@ -113,11 +108,10 @@ namespace Lab5
 
                     case "order":
                         {
-                            Console.WriteLine("Needed mounths: ");
-                            int mounthCount = Int32.Parse(Console.ReadLine());
+                            Console.WriteLine("Delivery date: ");
+                            DateTime deliveryDate = DateTime.Parse(Console.ReadLine()).Date;
 
                             DateTime registrationDate = DateTime.Now.Date;
-                            DateTime deliveryDate = registrationDate.AddMonths(mounthCount);
 
                             Order order =
                                 new Order()
@@ -161,16 +155,10 @@ namespace Lab5
                             Console.WriteLine("Order id: ");
                             int orderId = Int32.Parse(Console.ReadLine());
 
-                            Order order = db.Orders.FirstOrDefault(rec => rec.Id == orderId);
-                            if (order == null)
-                            {
-                                throw new Exception("Order with same Id isn't exist");
-                            }
-
                             Work work =
                                 new Work()
                                 {
-                                    WorkTypeId = db.WorkTypes.FirstOrDefault(rec => rec.Name == workTypeName).Id,
+                                    WorkTypeId = db.WorkTypes.First(rec => rec.Name == workTypeName).Id,
                                     OrderId = orderId
                                 };
 
@@ -206,12 +194,6 @@ namespace Lab5
                             Console.WriteLine("Brigade id: ");
                             int brigadeId = Int32.Parse(Console.ReadLine());
 
-                            Brigade brigade = db.Brigades.FirstOrDefault(rec => rec.Id == brigadeId);
-                            if (brigade == null)
-                            {
-                                throw new Exception("Order with same Id isn't exist");
-                            }
-
                             DateTime birthDate = new DateTime(birthYear, birthMounth, birthDay).Date;
                             DateTime admissionDate = DateTime.Now.Date;
 
@@ -223,7 +205,7 @@ namespace Lab5
                                     LastName = lastName,
                                     BirthDate = birthDate,
                                     AdmissionDate = admissionDate,
-                                    PositionId = db.Positions.FirstOrDefault(rec => rec.Name == positionName).Id,
+                                    PositionId = db.Positions.First(rec => rec.Name == positionName).Id,
                                     BrigadeId = brigadeId
                                 };
 
@@ -271,12 +253,13 @@ namespace Lab5
                         var brigades =
                             db.Brigades
                             .Where(rec => rec.OrderId == orderId)
+                            .Include(rec => rec.WorkType)
                             .Select(rec => new Brigade
                             {
                                 Id = rec.Id,
                                 WorkTypeId = rec.WorkTypeId,
                                 OrderId = rec.OrderId == null ? null : rec.OrderId,
-                                WorkType = db.WorkTypes.Include(recWT => recWT.Id == rec.WorkTypeId).FirstOrDefault()
+                                WorkType = rec.WorkType
                             });
 
                         Console.WriteLine("Brigade id\tWork type");
@@ -299,13 +282,14 @@ namespace Lab5
                         var materialsSets =
                             db.MaterialsSets
                             .Where(rec => rec.OrderId == orderId)
+                            .Include(rec => rec.MaterialsType)
                             .Select(rec => new MaterialsSet
                             {
                                 Id = rec.Id,
                                 Count = rec.Count,
                                 MaterialsTypeId = rec.MaterialsTypeId,
                                 OrderId = rec.OrderId,
-                                MaterialsType = db.MaterialsTypes.Include(recMT => recMT.Id == rec.MaterialsTypeId).FirstOrDefault()
+                                MaterialsType = rec.MaterialsType
                             });
 
                         Console.WriteLine("Materials type\tCount");
@@ -397,12 +381,13 @@ namespace Lab5
                         var works =
                             db.Works
                             .Where(rec => rec.OrderId == orderId)
+                            .Include(rec => rec.WorkType)
                             .Select(rec => new Work
                             {
                                 Id = rec.Id,
                                 WorkTypeId = rec.WorkTypeId,
                                 OrderId = rec.OrderId,
-                                WorkType = db.WorkTypes.Include(recWT => recWT.Id == rec.WorkTypeId).FirstOrDefault()
+                                WorkType = rec.WorkType
                             });
 
                         Console.WriteLine("Work");
@@ -425,6 +410,7 @@ namespace Lab5
                         var workers =
                             db.Workers
                             .Where(rec => rec.BrigadeId == brigadeId)
+                            .Include(rec => rec.Position)
                             .Select(rec => new Worker
                             {
                                 Id = rec.Id,
@@ -435,14 +421,14 @@ namespace Lab5
                                 AdmissionDate = rec.AdmissionDate,
                                 PositionId = rec.PositionId,
                                 BrigadeId = rec.BrigadeId,
-                                Position = db.Positions.Include(recP => recP.Id == rec.PositionId).FirstOrDefault()
+                                Position = rec.Position
                             });
 
-                        Console.WriteLine("Worker\tPosition\tAge\tAdmission date");
+                        Console.WriteLine("Id\tWorker\tPosition\tAge\tAdmission date");
                         Console.WriteLine();
                         foreach (var worker in workers)
                         {
-                            Console.WriteLine("{0} {1}.{2}.\t{3}\t{4}\t{5}", worker.SecondName, worker.FirstName[0], worker.LastName[0], DateTime.Now.Year - worker.BirthDate.Year, worker.AdmissionDate.ToString("dd:MM:yyyy"));
+                            Console.WriteLine("{0}\t{1} {2}.{3}.\t{4}\t{5}\t{6}", worker.Id, worker.SecondName, worker.FirstName[0], worker.LastName[0], DateTime.Now.Year - worker.BirthDate.Year, worker.AdmissionDate.ToString("dd:MM:yyyy"));
                         }
 
                         Console.WriteLine();
@@ -477,6 +463,113 @@ namespace Lab5
                         Console.WriteLine("Unknown entity: " + entity);
                         break;
                     }
+            }
+        }
+
+        static void Update()
+        {
+
+            Console.Write("Enter entity: ");
+            string entity = Console.ReadLine();
+
+            try
+            {
+                switch (entity.ToLower())
+                {
+                    case "brigade":
+                        {
+                            Console.Write("Enter brigade id: ");
+                            int brigadeId = Int32.Parse(Console.ReadLine());
+
+                            Brigade brigade = db.Brigades.First(rec => rec.Id == brigadeId);
+
+                            Console.Write("New order id: ");
+                            int orderId = Int32.Parse(Console.ReadLine());
+
+                            brigade.OrderId = orderId;
+                            db.SaveChanges();
+
+                            break;
+                        }
+
+                    case "materialstype":
+                        {
+                            Console.Write("Enter materials type name: ");
+                            string materialsTypeName = Console.ReadLine();
+
+                            MaterialsType materialsType = db.MaterialsTypes.First(rec => rec.Name == materialsTypeName);
+
+                            Console.Write("New price per unit: ");
+                            int pricePerUnit = Int32.Parse(Console.ReadLine());
+
+                            materialsType.PricePerUnit = pricePerUnit;
+                            db.SaveChanges();
+
+                            break;
+                        }
+
+                    case "order":
+                        {
+                            Console.Write("Enter order id: ");
+                            int orderId = Int32.Parse(Console.ReadLine());
+
+                            Order order = db.Orders.First(rec => rec.Id == orderId);
+
+                            Console.Write("New delivery date: ");
+                            DateTime deliveryDate = DateTime.Parse(Console.ReadLine());
+
+                            order.DeliveryDate = deliveryDate;
+                            db.SaveChanges();
+
+                            break;
+                        }
+
+                    case "position":
+                        {
+                            Console.Write("Enter position name: ");
+                            string positionName = Console.ReadLine();
+
+                            Position position = db.Positions.First(rec => rec.Name == positionName);
+
+                            Console.Write("New salary: ");
+                            int salary = Int32.Parse(Console.ReadLine());
+
+                            position.Salary = salary;
+                            db.SaveChanges();
+
+                            break;
+                        }
+
+                    case "worker":
+                        {
+                            Console.Write("Enter worker id: ");
+                            int workerId = Int32.Parse(Console.ReadLine());
+
+                            Worker worker = db.Workers.First(rec => rec.Id == workerId);
+
+                            Console.Write("New position: ");
+                            string positionName = Console.ReadLine();
+
+                            Console.Write("New brigade id: ");
+                            int brigadeId = Int32.Parse(Console.ReadLine());
+
+                            worker.PositionId = db.Positions.First(rec => rec.Name == positionName).Id;
+                            worker.BrigadeId = brigadeId;
+                            db.SaveChanges();
+
+                            break;
+                        }
+
+                    default:
+                        {
+                            Console.WriteLine("Unknown or non updatable entity: " + entity);
+                            break;
+                        }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
             }
         }
     }
