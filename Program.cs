@@ -28,6 +28,7 @@ namespace Lab5
                         Update();
                         break;
                     case "delete":
+                        Delete();
                         break;
                     case "exit": 
                         return;
@@ -54,7 +55,7 @@ namespace Lab5
 
                             Brigade brigade = new Brigade() { WorkTypeId = db.WorkTypes.First(rec => rec.Name == workTypeName).Id };
 
-                            db.Add(brigade);
+                            db.Brigades.Add(brigade);
                             db.SaveChanges();
 
                             break;
@@ -79,7 +80,7 @@ namespace Lab5
                                     OrderId = orderId
                                 };
 
-                            db.Add(materialsSet);
+                            db.MaterialsSets.Add(materialsSet);
                             db.SaveChanges();
 
                             break;
@@ -100,7 +101,7 @@ namespace Lab5
                                     PricePerUnit = pricePerUnit
                                 };
 
-                            db.Add(materialsType);
+                            db.MaterialsTypes.Add(materialsType);
                             db.SaveChanges();
 
                             break;
@@ -120,7 +121,7 @@ namespace Lab5
                                     DeliveryDate = deliveryDate
                                 };
 
-                            db.Add(order);
+                            db.Orders.Add(order);
                             db.SaveChanges();
 
                             break;
@@ -141,7 +142,7 @@ namespace Lab5
                                     Salary = positionSalary
                                 };
 
-                            db.Add(position);
+                            db.Positions.Add(position);
                             db.SaveChanges();
 
                             break;
@@ -162,7 +163,7 @@ namespace Lab5
                                     OrderId = orderId
                                 };
 
-                            db.Add(work);
+                            db.Works.Add(work);
                             db.SaveChanges();
 
                             break;
@@ -209,7 +210,7 @@ namespace Lab5
                                     BrigadeId = brigadeId
                                 };
 
-                            db.Add(worker);
+                            db.Workers.Add(worker);
                             db.SaveChanges();
 
                             break;
@@ -221,6 +222,9 @@ namespace Lab5
                             string workTypeName = Console.ReadLine();
 
                             WorkType workType = new WorkType() { Name = workTypeName };
+
+                            db.WorkTypes.Add(workType);
+                            db.SaveChanges();
 
                             break;
                         }
@@ -292,11 +296,11 @@ namespace Lab5
                                 MaterialsType = rec.MaterialsType
                             });
 
-                        Console.WriteLine("Materials type\tCount");
+                        Console.WriteLine("Materials set id\tMaterials type\tCount");
                         Console.WriteLine();
                         foreach (var set in materialsSets)
                         {
-                            Console.WriteLine("{0}\t{1}", set.MaterialsType.Name, set.Count);
+                            Console.WriteLine("{0}\t{1}\t{2}", set.Id, set.MaterialsType.Name, set.Count);
                         }
 
                         Console.WriteLine();
@@ -390,11 +394,11 @@ namespace Lab5
                                 WorkType = rec.WorkType
                             });
 
-                        Console.WriteLine("Work");
+                        Console.WriteLine("Work id\tWork");
                         Console.WriteLine();
                         foreach (var work in works)
                         {
-                            Console.WriteLine(work.WorkType.Name);
+                            Console.WriteLine("{0}\t{1}", work.Id, work.WorkType.Name);
                         }
 
                         Console.WriteLine();
@@ -570,6 +574,117 @@ namespace Lab5
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+            }
+        }
+
+        static void Delete()
+        {
+            Console.Write("Enter entity: ");
+            string entity = Console.ReadLine();
+
+            switch (entity.ToLower())
+            {
+                case "brigade":
+                    {
+                        Console.Write("Enter brigade id: ");
+                        int brigadeId = Int32.Parse(Console.ReadLine());
+
+                        Brigade brigade = db.Brigades.First(rec => rec.Id == brigadeId);
+                        db.Brigades.Remove(brigade);
+                        db.SaveChanges();
+
+                        break;
+                    }
+
+                case "materialsset":
+                    {
+                        Console.Write("Enter materials set id: ");
+                        int materialsSetId = Int32.Parse(Console.ReadLine());
+
+                        MaterialsSet materialsSet = db.MaterialsSets.First(rec => rec.Id == materialsSetId);
+                        db.MaterialsSets.Remove(materialsSet);
+                        db.SaveChanges();
+
+                        break;
+                    }
+
+                case "materialstype":
+                    {
+                        Console.Write("Enter materials type: ");
+                        string materialsTypeName = Console.ReadLine();
+
+                        MaterialsType materialsType = db.MaterialsTypes.First(rec => rec.Name == materialsTypeName);
+                        db.MaterialsTypes.Remove(materialsType);
+                        db.SaveChanges();
+
+                        break;
+                    }
+
+                case "order":
+                    {
+                        Console.Write("Enter order id: ");
+                        int orderId = Int32.Parse(Console.ReadLine());
+
+                        Order order = db.Orders.First(rec => rec.Id == orderId);
+                        db.Orders.Remove(order);
+                        db.SaveChanges();
+
+                        break;
+                    }
+
+                case "position":
+                    {
+                        Console.Write("Enter position: ");
+                        string positionName = Console.ReadLine();
+
+                        Position position = db.Positions.First(rec => rec.Name == positionName);
+                        db.Positions.Remove(position);
+                        db.SaveChanges();
+
+                        break;
+                    }
+
+                case "work":
+                    {
+                        Console.Write("Enter work id: ");
+                        int workId = Int32.Parse(Console.ReadLine());
+
+                        Work work = db.Works.First(rec => rec.Id == workId);
+                        db.Works.Remove(work);
+                        db.SaveChanges();
+
+                        break;
+                    }
+
+                case "worker":
+                    {
+                        Console.Write("Enter worker id: ");
+                        int workerId = Int32.Parse(Console.ReadLine());
+
+                        Worker worker = db.Workers.First(rec => rec.Id == workerId);
+                        db.Workers.Remove(worker);
+                        db.SaveChanges();
+
+                        break;
+                    }
+
+                case "worktype":
+                    {
+                        Console.Write("Enter work type: ");
+                        string workTypeName = Console.ReadLine();
+
+                        WorkType workType = db.WorkTypes.First(rec => rec.Name == workTypeName);
+                        db.WorkTypes.Remove(workType);
+                        db.SaveChanges();
+
+                        break;
+                    }
+
+                default:
+                    {
+                        Console.WriteLine("Unknown entity: " + entity);
+                        break;
+                    }
             }
         }
     }
