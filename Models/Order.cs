@@ -9,15 +9,12 @@ namespace Lab5.Models
     [Table("Order")]
     public class Order
     {
-        [Required]
         [Column("id")]
         public int Id { get; set; }
 
-        [Required]
         [Column("registreation_date")]
         public DateTime RegistrationDate { get; set; }
 
-        [Required]
         [Column("delivery_date")]
         public DateTime DeliveryDate { get; set; }
 
