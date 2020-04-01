@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Lab5
 {
@@ -264,6 +263,23 @@ namespace Lab5
             }
 
             return answer;
+        }
+
+        public static (string, int) ReadMaxUsedMaterials()
+        {
+            var answer =
+                db.MaterialsSets
+                .Include(rec => rec.MaterialsType)
+                .GroupBy(rec => rec.MaterialsType.Name)
+                .Select(m => new
+                {
+                    name = m.Key,
+                    count = m.Sum(rec => rec.Count)
+                })
+                .OrderByDescending(rec => rec.count)
+                .First();
+
+            return (answer.name, answer.count);
         }
 
         private static void UpdateMaterialsSet(MaterialsSet model)

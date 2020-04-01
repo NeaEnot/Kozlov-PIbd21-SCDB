@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Lab5.Models
 {
-    [Table("Materials_type")]
+    [Table("materials_type")]
     public class MaterialsType
     {
         [Column("id")]
@@ -14,6 +14,7 @@ namespace Lab5.Models
         [Column("name")]
         public string Name { get; set; }
 
+        [Required]
         [Column("price_per_unit")]
         public int? PricePerUnit { get; set; }
 

@@ -1,8 +1,6 @@
 ﻿using Lab5.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Lab5
 {
@@ -18,10 +16,21 @@ namespace Lab5
             String connectionString = "Server=localhost;" +
                                       "Port=5432;" +
                                       "Username=postgres;" +
-                                      "Password=2x0x0x0;" +
                                       "Database=constructioncompany;";
 
             optionsBuilder.UseNpgsql(connectionString);
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Brigade>(entity => { entity.Property(e => e.Id).UseHiLo("seq_brigade"); });
+            modelBuilder.Entity<MaterialsSet>(entity => { entity.Property(e => e.Id).UseHiLo("seq_materials"); });
+            modelBuilder.Entity<MaterialsType>(entity => { entity.Property(e => e.Id).UseHiLo("seq_materialstype"); });
+            modelBuilder.Entity<Order>(entity => { entity.Property(e => e.Id).UseHiLo("seq_order"); });
+            modelBuilder.Entity<Position>(entity => { entity.Property(e => e.Id).UseHiLo("seq_position"); });
+            modelBuilder.Entity<Work>(entity => { entity.Property(e => e.Id).UseHiLo("seq_work"); });
+            modelBuilder.Entity<Worker>(entity => { entity.Property(e => e.Id).UseHiLo("seq_worker"); });
+            modelBuilder.Entity<WorkType>(entity => { entity.Property(e => e.Id).UseHiLo("seq_worktype"); });
         }
 
         public DbSet<Brigade> Brigades { get; set; }

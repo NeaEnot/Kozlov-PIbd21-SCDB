@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Lab5.Models
 {
-    [Table("Work_type")]
+    [Table("work_type")]
     public class WorkType
     {
         [Column("id")]
