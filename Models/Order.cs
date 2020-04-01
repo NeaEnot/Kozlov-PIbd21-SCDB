@@ -16,11 +16,11 @@ namespace Lab5.Models
 
         [Required]
         [Column("registration_date")]
-        public DateTime RegistrationDate { get; set; }
+        public DateTime? RegistrationDate { get; set; }
 
         [Required]
         [Column("delivery_date")]
-        public DateTime DeliveryDate { get; set; }
+        public DateTime? DeliveryDate { get; set; }
 
         public List<MaterialsSet> MaterialsSets { get; set; }
 

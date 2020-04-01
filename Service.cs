@@ -422,7 +422,7 @@ namespace Lab5
                 throw new Exception("Column DeliveryDate could not be null");
             }
 
-            db.Orders.Add(new Order() { RegistrationDate = model.RegistrationDate.Date, DeliveryDate = model.DeliveryDate.Date });
+            db.Orders.Add(new Order() { RegistrationDate = model.RegistrationDate.Value.Date, DeliveryDate = model.DeliveryDate.Value.Date });
             db.SaveChanges();
         }
 
@@ -430,7 +430,7 @@ namespace Lab5
         {
             List<Order> answer = null;
 
-            if (model.RegistrationDate != null && model.DeliveryDate != null)
+            if (model.RegistrationDate.HasValue && model.DeliveryDate.HasValue)
             {
                 answer =
                     db.Orders
@@ -440,7 +440,7 @@ namespace Lab5
                     .Include(rec => rec.MaterialsSets)
                     .ToList();
             }
-            else if (model.RegistrationDate != null && model.DeliveryDate == null)
+            else if (model.RegistrationDate.HasValue && !model.DeliveryDate.HasValue)
             {
                 answer =
                     db.Orders
@@ -450,7 +450,7 @@ namespace Lab5
                     .Include(rec => rec.MaterialsSets)
                     .ToList();
             }
-            else if (model.RegistrationDate == null && model.DeliveryDate != null)
+            else if (!model.RegistrationDate.HasValue && model.DeliveryDate.HasValue)
             {
                 answer =
                     db.Orders
@@ -464,7 +464,7 @@ namespace Lab5
             {
                 answer =
                     db.Orders
-                    .Where(rec => rec.Id <= model.Id)
+                    .Where(rec => rec.Id == model.Id)
                     .Include(rec => rec.Works)
                     .Include(rec => rec.Brigades)
                     .Include(rec => rec.MaterialsSets)
@@ -478,7 +478,7 @@ namespace Lab5
         {
             List<Order> answer = null;
             
-            if (model.RegistrationDate != null && model.DeliveryDate != null)
+            if (model.RegistrationDate.HasValue && model.DeliveryDate.HasValue)
             {
                 answer =
                     db.Orders
@@ -490,7 +490,7 @@ namespace Lab5
                     .Take(pageSize)
                     .ToList();
             }
-            else if (model.RegistrationDate != null && model.DeliveryDate == null)
+            else if (model.RegistrationDate.HasValue && !model.DeliveryDate.HasValue)
             {
                 answer =
                     db.Orders
@@ -502,11 +502,11 @@ namespace Lab5
                     .Take(pageSize)
                     .ToList();
             }
-            else if (model.RegistrationDate == null && model.DeliveryDate != null)
+            else if (!model.RegistrationDate.HasValue && model.DeliveryDate.HasValue)
             {
                 answer =
                     db.Orders
-                    .Where(rec => rec.DeliveryDate <= model.DeliveryDate)
+                    .Where(rec => rec.DeliveryDate == model.DeliveryDate)
                     .Include(rec => rec.Works)
                     .Include(rec => rec.Brigades)
                     .Include(rec => rec.MaterialsSets)
@@ -807,9 +807,9 @@ namespace Lab5
                 throw new Exception("Column BrigadeId could not be null");
             }
 
-            db.Workers.Add(
-                new Worker() 
-                { 
+            Worker worker =
+                new Worker()
+                {
                     FirstName = model.FirstName,
                     SecondName = model.SecondName,
                     LastName = model.LastName,
@@ -817,7 +817,9 @@ namespace Lab5
                     AdmissionDate = model.AdmissionDate,
                     PositionId = model.PositionId,
                     BrigadeId = model.BrigadeId
-                });
+                };
+
+            db.Workers.Add(worker);
             db.SaveChanges();
         }
 

@@ -23,6 +23,15 @@ namespace Lab5
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasSequence<int>("seq_brigade").IncrementsBy(1);
+            modelBuilder.HasSequence<int>("seq_materials").IncrementsBy(1);
+            modelBuilder.HasSequence<int>("seq_materialstype").IncrementsBy(1);
+            modelBuilder.HasSequence<int>("seq_order").IncrementsBy(1);
+            modelBuilder.HasSequence<int>("seq_position").IncrementsBy(1);
+            modelBuilder.HasSequence<int>("seq_work").IncrementsBy(1);
+            modelBuilder.HasSequence<int>("seq_worker").IncrementsBy(1);
+            modelBuilder.HasSequence<int>("seq_worktype").IncrementsBy(1);
+
             modelBuilder.Entity<Brigade>(entity => { entity.Property(e => e.Id).UseHiLo("seq_brigade"); });
             modelBuilder.Entity<MaterialsSet>(entity => { entity.Property(e => e.Id).UseHiLo("seq_materials"); });
             modelBuilder.Entity<MaterialsType>(entity => { entity.Property(e => e.Id).UseHiLo("seq_materialstype"); });
