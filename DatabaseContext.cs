@@ -6,17 +6,27 @@ namespace Lab5
 {
     public class DatabaseContext : DbContext
     {
-        public DatabaseContext()
+        private string server;
+        private string port;
+        private string username;
+        private string database;
+
+        public DatabaseContext(string server, string port, string username, string database)
         {
+            this.server = server;
+            this.port = port;
+            this.username = username;
+            this.database = database;
+
             Database.EnsureCreated();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            String connectionString = "Server=localhost;" +
-                                      "Port=5432;" +
-                                      "Username=postgres;" +
-                                      "Database=constructioncompany;";
+            String connectionString = "Server=" + server + ";" +
+                                      "Port=" + port + ";" +
+                                      "Username=" + username + ";" +
+                                      "Database=" + database + ";";
 
             optionsBuilder.UseNpgsql(connectionString);
         }

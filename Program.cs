@@ -1,4 +1,5 @@
 ﻿using Lab5.Models;
+using Lab5.Service;
 using System;
 using System.Linq;
 
@@ -6,6 +7,8 @@ namespace Lab5
 {
     class Program
     {
+        public static readonly DatabaseContext DB = new DatabaseContext("localhost", "5432", "postgres", "constructioncompany");
+
         static void Main(string[] args)
         {
             int[,] summaryTable = new int[11, 15];
@@ -21,13 +24,16 @@ namespace Lab5
 
             for (int i = 0; i < 15; i++)
             {
-                int sum = 0;
+                int min = Int32.MaxValue;
                 for (int j = 0; j < 10; j++)
                 {
-                    sum += summaryTable[j, i];
+                    if (summaryTable[j, i] < min)
+                    {
+                        min = summaryTable[j, i];
+                    }
                 }
 
-                summaryTable[10, i] = sum / 10;
+                summaryTable[10, i] = min;
             }
 
             Console.WriteLine();
@@ -83,7 +89,7 @@ namespace Lab5
             Order model = new Order() { RegistrationDate = DateTime.Now.Date, DeliveryDate = DateTime.Now.AddMonths(4).Date };
 
             DateTime startTime = DateTime.Now;
-            Service.CreateOrder(model);
+            OrderService.Create(model);
             DateTime finishTime = DateTime.Now;
 
             return (int)(finishTime - startTime).TotalMilliseconds;
@@ -91,14 +97,14 @@ namespace Lab5
 
         static int ScriptInsert1()
         {
-            var order = Service.ReadOrders(new Order() { RegistrationDate = DateTime.Now.Date }, 1, 0).First();
+            var order = OrderService.Read(new Order() { RegistrationDate = DateTime.Now.Date }, 1, 0).First();
 
             // Предполагается, что действия до создания модели - это моделирование выбора пользователя
 
             Brigade model = new Brigade() { WorkTypeId = 10, OrderId = order.Id };
 
             DateTime startTime = DateTime.Now;
-            Service.CreateBrigade(model);
+            BrigadeService.Create(model);
             DateTime finishTime = DateTime.Now;
 
             return (int)(finishTime - startTime).TotalMilliseconds;
@@ -106,8 +112,8 @@ namespace Lab5
 
         static int ScriptInsert2()
         {
-            var order = Service.ReadOrders(new Order() { RegistrationDate = DateTime.Now.Date }, 1, 0).First();
-            var brigade = Service.ReadBrigades(new Brigade() { OrderId = order.Id }, 1, 0).First();
+            var order = OrderService.Read(new Order() { RegistrationDate = DateTime.Now.Date }, 1, 0).First();
+            var brigade = BrigadeService.Read(new Brigade() { OrderId = order.Id }, 1, 0).First();
 
             // Предполагается, что действия до создания модели - это моделирование выбора пользователя
 
@@ -130,7 +136,7 @@ namespace Lab5
             DateTime startTime = DateTime.Now;
             foreach (var model in models)
             {
-                Service.CreateWorker(model);
+                WorkerService.Create(model);
             }
             DateTime finishTime = DateTime.Now;
 
@@ -142,7 +148,7 @@ namespace Lab5
             Order model = new Order() { RegistrationDate = DateTime.Now.Date };
 
             DateTime startTime = DateTime.Now;
-            Order order = Service.ReadOrders(model, 1, 0).First();
+            Order order = OrderService.Read(model, 1, 0).First();
             DateTime finishTime = DateTime.Now;
 
             Console.WriteLine("{0}: {1} - {2}", order.Id, order.RegistrationDate.Value.ToString("dd.MM.yyyy"), order.DeliveryDate.Value.ToString("dd.MM.yyyy"));
@@ -152,14 +158,14 @@ namespace Lab5
 
         static int ScriptRead1()
         {
-            Order order = Service.ReadOrders(new Order() { RegistrationDate = DateTime.Now.Date }, 1, 0).First();
+            Order order = OrderService.Read(new Order() { RegistrationDate = DateTime.Now.Date }, 1, 0).First();
 
             // Предполагается, что действия до создания модели - это моделирование выбора пользователя
 
             Brigade model = new Brigade() { OrderId = order.Id };
 
             DateTime startTime = DateTime.Now;
-            Brigade brigade = Service.ReadBrigades(model, 1, 0).First();
+            Brigade brigade = BrigadeService.Read(model, 1, 0).First();
             DateTime finishTime = DateTime.Now;
 
             Console.WriteLine("{0}: {1}", brigade.Id, brigade.Workers.Count);
@@ -169,15 +175,15 @@ namespace Lab5
 
         static int ScriptRead2()
         {
-            Order order = Service.ReadOrders(new Order() { RegistrationDate = DateTime.Now.Date }, 1, 0).First();
-            Brigade brigade = Service.ReadBrigades(new Brigade() { OrderId = order.Id }, 1, 0).First();
+            Order order = OrderService.Read(new Order() { RegistrationDate = DateTime.Now.Date }, 1, 0).First();
+            Brigade brigade = BrigadeService.Read(new Brigade() { OrderId = order.Id }, 1, 0).First();
 
             // Предполагается, что действия до создания модели - это моделирование выбора пользователя
 
             Worker model = new Worker() { BrigadeId = brigade.Id };
 
             DateTime startTime = DateTime.Now;
-            var models = Service.ReadWorkers(model);
+            var models = WorkerService.Read(model);
             DateTime finishTime = DateTime.Now;
 
             foreach (var worker in models)
@@ -190,14 +196,14 @@ namespace Lab5
 
         static int ScriptUpdate0()
         {
-            Order order = Service.ReadOrders(new Order() { RegistrationDate = DateTime.Now.Date }, 1, 0).First();
+            Order order = OrderService.Read(new Order() { RegistrationDate = DateTime.Now.Date }, 1, 0).First();
 
             // Предполагается, что действия до создания модели - это моделирование выбора пользователя
 
             Order model = new Order() { Id = order.Id, DeliveryDate = order.DeliveryDate.Value.AddMonths(4).Date };
 
             DateTime startTime = DateTime.Now;
-            Service.UpdateOrder(model);
+            OrderService.Update(model);
             DateTime finishTime = DateTime.Now;
 
             return (int)(finishTime - startTime).TotalMilliseconds;
@@ -205,15 +211,15 @@ namespace Lab5
 
         static int ScriptUpdate1()
         {
-            Order order = Service.ReadOrders(new Order() { RegistrationDate = DateTime.Now.Date }, 1, 0).First();
-            Brigade brigade = Service.ReadBrigades(new Brigade() { OrderId = order.Id }, 1, 0).First();
+            Order order = OrderService.Read(new Order() { RegistrationDate = DateTime.Now.Date }, 1, 0).First();
+            Brigade brigade = BrigadeService.Read(new Brigade() { OrderId = order.Id }, 1, 0).First();
 
             // Предполагается, что действия до создания модели - это моделирование выбора пользователя
 
             Brigade model = new Brigade() { Id = brigade.Id, WorkTypeId = 11 };
 
             DateTime startTime = DateTime.Now;
-            Service.UpdateBrigade(model);
+            BrigadeService.Update(model);
             DateTime finishTime = DateTime.Now;
 
             return (int)(finishTime - startTime).TotalMilliseconds;
@@ -221,18 +227,18 @@ namespace Lab5
 
         static int ScriptUpdate2()
         {
-            Order order = Service.ReadOrders(new Order() { RegistrationDate = DateTime.Now.Date }, 1, 0).First();
-            Brigade brigade = Service.ReadBrigades(new Brigade() { OrderId = order.Id }, 1, 0).First();
+            Order order = OrderService.Read(new Order() { RegistrationDate = DateTime.Now.Date }, 1, 0).First();
+            Brigade brigade = BrigadeService.Read(new Brigade() { OrderId = order.Id }, 1, 0).First();
 
             // Предполагается, что действия до создания модели - это моделирование выбора пользователя
 
-            var models = Service.ReadWorkers(new Worker() { BrigadeId = brigade.Id });
+            var models = WorkerService.Read(new Worker() { BrigadeId = brigade.Id });
 
             DateTime startTime = DateTime.Now;
             foreach (var model in models)
             {
                 model.PositionId = 8;
-                Service.UpdateWorker(model);
+                WorkerService.Update(model);
             }
             DateTime finishTime = DateTime.Now;
 
@@ -241,14 +247,14 @@ namespace Lab5
 
         static int ScriptDelete0()
         {
-            Order order = Service.ReadOrders(new Order() { RegistrationDate = DateTime.Now.Date }, 1, 0).First();
+            Order order = OrderService.Read(new Order() { RegistrationDate = DateTime.Now.Date }, 1, 0).First();
 
             // Предполагается, что действия до создания модели - это моделирование выбора пользователя
 
             Order model = new Order() { Id = order.Id };
 
             DateTime startTime = DateTime.Now;
-            Service.DeleteOrder(model);
+            OrderService.Delete(model);
             DateTime finishTime = DateTime.Now;
 
             return (int)(finishTime - startTime).TotalMilliseconds;
@@ -256,15 +262,15 @@ namespace Lab5
 
         static int ScriptDelete1()
         {
-            Order order = Service.ReadOrders(new Order() { RegistrationDate = DateTime.Now.Date }, 1, 0).First();
-            Brigade brigade = Service.ReadBrigades(new Brigade() { OrderId = order.Id }, 1, 0).First();
+            Order order = OrderService.Read(new Order() { RegistrationDate = DateTime.Now.Date }, 1, 0).First();
+            Brigade brigade = BrigadeService.Read(new Brigade() { OrderId = order.Id }, 1, 0).First();
 
             // Предполагается, что действия до создания модели - это моделирование выбора пользователя
 
             Brigade model = new Brigade() { Id = brigade.Id };
 
             DateTime startTime = DateTime.Now;
-            Service.DeleteBrigade(model);
+            BrigadeService.Delete(model);
             DateTime finishTime = DateTime.Now;
 
             return (int)(finishTime - startTime).TotalMilliseconds;
@@ -272,17 +278,17 @@ namespace Lab5
 
         static int ScriptDelete2()
         {
-            Order order = Service.ReadOrders(new Order() { RegistrationDate = DateTime.Now.Date }, 1, 0).First();
-            Brigade brigade = Service.ReadBrigades(new Brigade() { OrderId = order.Id }, 1, 0).First();
+            Order order = OrderService.Read(new Order() { RegistrationDate = DateTime.Now.Date }, 1, 0).First();
+            Brigade brigade = BrigadeService.Read(new Brigade() { OrderId = order.Id }, 1, 0).First();
 
             // Предполагается, что действия до создания модели - это моделирование выбора пользователя
 
-            var models = Service.ReadWorkers(new Worker() { BrigadeId = brigade.Id });
+            var models = WorkerService.Read(new Worker() { BrigadeId = brigade.Id });
 
             DateTime startTime = DateTime.Now;
             foreach (var model in models)
             {
-                Service.DeleteWorker(model);
+                WorkerService.Delete(model);
             }
             DateTime finishTime = DateTime.Now;
 
@@ -291,19 +297,19 @@ namespace Lab5
 
         static int ScriptCustom0()
         {
-            Order order = Service.ReadOrders(new Order() { RegistrationDate = DateTime.Now.Date }, 1, 0).First();
+            Order order = OrderService.Read(new Order() { RegistrationDate = DateTime.Now.Date }, 1, 0).First();
 
             // Предполагается, что действия до создания модели - это моделирование выбора пользователя
 
             Brigade model = new Brigade() { OrderId = order.Id };
 
             DateTime startTime = DateTime.Now;
-            var brigades = Service.ReadBrigades(model);
+            var brigades = BrigadeService.Read(model);
             foreach (var brigade in brigades)
             {
                 foreach (var worker in brigade.Workers)
                 {
-                    Console.WriteLine("{0} {1} {2} ", worker.SecondName, worker.FirstName, worker.LastName);
+                    Console.WriteLine("{0} {1} {2}", worker.SecondName, worker.FirstName, worker.LastName);
                 }
             }
             DateTime finishTime = DateTime.Now;
@@ -314,7 +320,7 @@ namespace Lab5
         static int ScriptCustom1()
         {
             DateTime startTime = DateTime.Now;
-            var orders = Service.ReadOrders(new Order() { DeliveryDate = DateTime.Now.Date });
+            var orders = OrderService.Read(new Order() { DeliveryDate = DateTime.Now.Date });
             foreach (var order in orders)
             {
                 Console.WriteLine("{0}: {1} - {2} ", order.Id, order.RegistrationDate.Value.ToString("dd.MM.yyyy"), order.DeliveryDate.Value.ToString("dd.MM.yyyy"));
@@ -327,7 +333,7 @@ namespace Lab5
         static int ScriptCustom2()
         {
             DateTime startTime = DateTime.Now;
-            var materials = Service.ReadMaxUsedMaterials();
+            var materials = MaterialsSetService.ReadMaxUsedMaterials();
             Console.WriteLine("{0}: {1}", materials.Item1, materials.Item2);
             DateTime finishTime = DateTime.Now;
 
